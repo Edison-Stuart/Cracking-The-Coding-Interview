@@ -15,6 +15,3 @@ class Node:
 
     def __str__(self):
         return str(self.data)
-
-    def __getitem__(self, item):
-        return self.data[item]
