@@ -1,5 +1,5 @@
 '''Contains class that uses Nodes to create a linked list based on parameters'''
-from list_node import Node
+from .list_node import Node
 class LinkedList:
     '''Class that uses Nodes to create a linked list based on parameters'''
     def __init__(self, *args):

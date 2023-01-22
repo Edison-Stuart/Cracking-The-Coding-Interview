@@ -42,11 +42,11 @@ def kth_to_last(node, k):
     while current_node.next_node is not None:
         items_in_list += 1
         current_node = current_node.next_node
-	
+
     if k > items_in_list:
         return -1
-	
+
     if k == items_in_list:
         return 0
-	
+
     return items_in_list - (k + 1)
