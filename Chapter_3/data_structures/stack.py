@@ -15,24 +15,27 @@ class Stack:
         """Puts an item on to the top of the stack."""
         if self._top is None:
             self._top = StackNode(data)
-            return
-        temp = StackNode(data)
-        temp.next = self._top
-        self._top = temp
+        else:
+            temp = StackNode(data)
+            temp.next = self._top
+            self._top = temp
 
     def pop(self):
         """Removes the top item from the stack and returns it."""
         if self._top is None:
-            return None
-        item = self._top.data
-        self._top = self._top.next
+            item = None
+        else:
+            item = self._top.data
+            self._top = self._top.next
         return item
 
     def peek(self):
         """Returns the top item of the stack"""
         if self._top is None:
-            return None
-        return self._top.data
+            item = None
+        else:
+            item = self._top.data
+        return item
 
     def is_empty(self):
         """Returns true if stack is empty"""

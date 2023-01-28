@@ -81,32 +81,28 @@ class SetOfStacks:
         if self.top is None:
             self.top = StackNode(data)
             self.stack_size += 1
-            return
-
-        if self.stack_size % self.stack_capacity == 0:
+        elif self.stack_size % self.stack_capacity == 0:
             new_top = StackNode(data)
             pointer = StackNode(None)
             new_top.next = pointer
             pointer.next = self.top
             self.top = new_top
             self.stack_size += 2
-            return
-		
-        temp = StackNode(data)
-        temp.next = self.top
-        self.top = temp
-        self.stack_size += 1
+        else:
+            temp = StackNode(data)
+            temp.next = self.top
+            self.top = temp
+            self.stack_size += 1
 
     def pop(self):
         if self.top is None:
-            return None
-        if self.top.next.data is None:
+            item = None
+        elif self.top.next.data is None:
             item = self.top.data
             self.top = self.top.next.next
             self.stack_size -= 2
-            return item
-
-        item = self.top.data
-        self.top = self.top.next
-        self.stack_size -= 1
+        else:
+            item = self.top.data
+            self.top = self.top.next
+            self.stack_size -= 1
         return item
