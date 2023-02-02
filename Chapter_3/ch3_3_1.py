@@ -179,7 +179,7 @@ popFromBackStack will mirror popFromFrontStack
 		}
 	}
 
-We will call this modified calss ArrayOfStacks
+We will call this modified class ArrayOfStacks
 
 	}
 
@@ -198,8 +198,8 @@ array size that will determine the size of the array which our stacks will be ho
 
     constructor(array_size) {
     		self.stack = [null] * array_size
-    		self.head_back = null
-            self.head_front = null
+    		self.head_back = len(self.stack) - 1
+            self.head_front = 0
             self.middle[floor(array_size / 2), floor(array_size / 2)] // head, tail
     	}
 
@@ -213,11 +213,24 @@ for the stack to grow.
 
     _push_to_front_stack(self, data) {
 
-We do the same check to see if the front head is null
+We now need to ensure there is space for the
+front stack to begin. There is the case that the
+middle and back stack have grown such that the front
+stack wil have no space.
+We do this by checking if the middle's tail
+pointer is the same as the front's head pointer.
+If it is the same, we raise an exception
 
-        if (self.head_front is null) {
-            self.head_front = 0
+        if (self.head_front == self.middle[1]) {
+            raise Exception("No more space in array")
+        }
+        elif (self.head_front == 0 && self.stack[head_front] == null) {
+
+If the head_front has space, and it is set to 0, along with
+stack[head_front] being empty, we just push the data to that index.
+
             self.stack[self.head_front] = data
+
         }
 
 Then we check if the head would overlap with the middle if added to, if so,
@@ -235,14 +248,23 @@ _shift_middle.
 
         elif (self.head_front + 1 == self.middle[1]) {
             self._shift_middle(1)
-        }
 
 After we have made sure there is enough space, we can then
 add 1 to the front head value, then use that index to put
 our data into the array.
 
-        self.head_front += 1
-        self.stack[self.head_front] = data
+            self.head_front += 1
+            self.stack[self.head_front] = data
+        }
+        else {
+
+Otherwise, if no shifting was needed, we can just add one to the index
+and put the data where it belongs.
+
+            self.head_front += 1
+            self.stack[self.head_front] = data
+        }
+
     }
 
 We have to make similar changes to _push_to_back_stack.
@@ -250,11 +272,13 @@ We have to make similar changes to _push_to_back_stack.
     def _push_to_back_stack(self, data) {
 
 
-We start by doing the same if head is null check
+We start by doing the same check on the head
 
 
-        if (self.head_back is null) {
-            self.head_back = len(self.stack) - 1
+        if (self.head_back == self.middle[0]) {
+            raise Exception("No more space in array")
+        }
+        elif (self.head_back == len(self.stack) - 1 && self.stack[self.head_back] == null) {
             self.stack[self.head_back] = data
         }
 
@@ -265,17 +289,21 @@ We do the same check for space in the opposite direction
         }
 
 Then if there is no exception, we again check for collisions,
-and move the middle if needed
+and move the middle if needed along with decreasing the index
+and adding the data.
 
         elif (self.head_back - 1 == self.middle[1]) {
             self._shift_middle(-1)
+            self.head_back -= 1
+            self.stack[self.head_back] = data
         }
 
 After these checks have passed and space is available,
 we add to the stack like before.
-
+        else {
         self.head_back -= 1
         self.stack[self.head_back] = data
+        }
     }
 
 Now that we have made these changes to pushing from both sides,
@@ -332,23 +360,240 @@ With the hard part out of the way, now we just have to implement
 the _push_to_middle function, and then the pop function.
 
 
-for pushing to the middle stack, we will first check if the middle is empty.
-If so we then do a similar check to the last functions for head collisions,
+for pushing to the middle stack, we will first check the middle has not been pushed
+into. we will then check if the middle is empty.
+If not, we then do a similar check to the last functions for head collisions,
 moving the middle stack if needed.
 
     _push_to_middle(self, data) {
+        if (self.middle[1] == self.head_back) {
+            raise Exception("No more space in array")
+        }
+        elif (self.middle[0] == self.middle[1] && self.stack[self.middle[0]] == null) {
+            self.stack[self.middle[0]] = data
+        }
+        elif (self.middle[1] + 1 == self.head_back && self.middle[0] - 1 == self.head_front) {
+            raise Exception("No more space in array")
+        }
+        elif (self.middle[1] + 1 == self.head_back) {
+            _shift_middle(-1)
+            self.middle[1] += 1
+            self.stack[self.middle] = data
+        }
+
+After those checks pass, we know there is enough space so we
+add one to the middle head index and put our data there.
+
+        else {
+            self.middle[1] += 1
+            self.stack[self.middle] = data
+        }
+
+
+We now have to remake _pop_from_front_stack and _pop_from_back_stack,
+along with creating _pop_from_middle_stack.
+
+let's start with pop from front stack
+
+    _pop_from_front_stack(self) {
+
+We first check if there are any values in the stack
+
+        if (self.head_front == 0 && self.stack[self.head_front] == null) {
+            raise Exception("No more space in array")
+        }
+        elif (self.head_front == 0) {
+
+If the head_front is 0 but there is data in the array,
+we save that data to a variable to be returned then set
+the stack position to null.
+
+            value = self.stack[self.head_front]
+            self.stack[self.head_front] = null
+        }
+        else {
+
+If there is data in the stack, and the head front is not 0,
+we want to do the same thing as before, but this time we
+also decrease the head_front value by 1.
+
+            value = self.stack[self.head_front]
+            self.stack[self.head_front] = null
+            self.head_front -= 1
+        }
+
+at the end we return the value
+
+        return value
 
     }
 
+
+Now for the _pop_from_back_stack function
+
+    _pop_from_back_stack(self) {
+        if (self.head_back == len(self.stack) - 1 && self.stack[self.head_back] == null) {
+            raise Exception("No more space in array")
+        }
+        elif (self.head_back == len(self.stack) - 1) {
+            value = self.stack[self.head_back]
+            self.stack[self.head_back] = null
+        }
+        else {
+            value = self.stack[self.head_back]
+            self.stack[self.head_back = null]
+            self.head_back += 1
+        }
+        retrn value
+    }
+
+The pop from back stack method is almost the same as the
+pop from front stack method, just reversed.
+
+Now for the _pop_from_middle_stack function
+
+
+    _pop_from_middle_stack(self) {
+
+We want to check that the middle head is not the same as tail,
+as well as the stack at index middle_head is not empty
+
+    if (self.middle[1] == self.middle[0] && self.stack[self.middle[1]] == null) {
+            raise Exception("No more space in array")
+    }
+    elif (self.middle[1] == self.middle[0]) {
+        value = self.stack[self.middle[1]]
+        self.stack[self.middle[1]] = null
+    }
+    else {
+        value = self.stack[self.middle[1]]
+        self.stack[self.middle[1]] = null
+        self.middle[1] -= 1
+    }
+
+We can also add the peek method
+
+    peek(self, stack) {
+        if (stack == 0) {
+            value = self.stack[self.head_front]
+        }
+        elif (stack == 1) {
+            value = self.stack[self.middle[1]]
+        }
+        elif (stack == 2) {
+            value = self.stack[self.head_back]
+        }
+        return value
+    }
+
+This stack class has all the method needed except is_empty, which
+can be added later.
+
 '''
+# class ArrayOfStacks:
+#     '''A class that uses an array which stores a stack in a subset of the array'''
+#     def __init__(self, stack_size):
+#         '''Accepts size limit of stack, no greater than 9'''
+#         self.stack = [None] * 20
+#         self.head_1 = None
+#         self.head_2 = None
+#         self.stack_size = stack_size
+
+#     def push(self, data, stack):
+#         '''Accepts data and then which stack, 1 or 2, to
+# 		   push the data to'''
+#         if stack == 1:
+#             self._push_to_front_stack(data)
+#         elif stack == 2:
+#             self._push_to_back_stack(data)
+#         else:
+#             raise Exception("value 'stack' should be 1 or 2")
+
+#     def pop(self, stack):
+#         '''Accepts a stack number, 1 or 2, and pops out
+# 		   the top value from that stack'''
+#         value = None
+#         if stack == 1:
+#             value = self._pop_from_front_stack()
+#         elif stack == 2:
+#             value = self._pop_from_back_stack()
+#         else:
+#             raise Exception("value 'stack' should be 1 or 2")
+#         return value
+
+#     def peek(self, stack):
+#         '''Method accepts 1 or 2, denoting which stack
+# 		   you want to access. Then returns the top value
+# 		   from that stack'''
+#         value = None
+#         if stack == 1:
+#             value = self.stack[self.head_1]
+#         elif stack == 2:
+#             value = self.stack[self.head_2]
+#         return value
+
+#     def _push_to_front_stack(self, data):
+#         '''Takes data and puts it into stack 1'''
+#         if self.head_1 is None:
+#             self.head_1 = 0
+#             self.stack[self.head_1] = data
+#         else:
+#             if self.head_1 + 1 == self.stack_size:
+#                 raise Exception("stack 1 at capacity")
+#             self.head_1 += 1
+#             self.stack[self.head_1] = data
+
+#     def _push_to_back_stack(self, data):
+#         '''Takes data and puts it into stack 2'''
+#         if self.head_2 is None:
+#             self.head_2 = len(self.stack) - 1
+#             self.stack[self.head_2] = data
+#         else:
+#             if (len(self.stack) - self.head_2) == self.stack_size:
+#                 raise Exception("stack 2 is at capacity")
+#             self.head_2 -= 1
+#             self.stack[self.head_2] = data
+
+#     def _pop_from_front_stack(self):
+#         '''Removes the top value from the front stack and returns it'''
+#         if self.head_1 is None:
+#             raise Exception("stack 1 is empty")
+
+#         value = self.stack[self.head_1]
+#         self.stack[self.head_1] = None
+
+#         if self.head_1 == 0:
+#             self.head_1 = None
+#         elif self.head_1 > 0:
+#             self.head_1 -= 1
+
+#         return value
+
+#     def _pop_from_back_stack(self):
+#         '''Removes the top value from the back stack and returns it'''
+#         if self.head_2 is None:
+#             raise Exception("Stack 2 is empty")
+
+#         value = self.stack[self.head_2]
+#         self.stack[self.head_2] = None
+
+#         if self.head_2 == len(self.stack) - 1:
+#             self.head_2 = None
+#         elif self.head_2 < len(self.stack) - 1:
+#             self.head_2 += 1
+
+#         return value
+
+import math
+
 class ArrayOfStacks:
-    '''A class that uses an array which stores a stack in a subset of the array'''
-    def __init__(self, stack_size):
-        '''Accepts size limit of stack, no greater than 9'''
-        self.stack = [None] * 20
-        self.head_1 = None
-        self.head_2 = None
-        self.stack_size = stack_size
+
+    def __init__(self, array_size):
+        self.stack = [None] * array_size
+        self.head_back = len(self.stack) - 1
+        self.head_front = 0
+        self.middle = [math.floor(array_size / 2), math.floor(array_size / 2)] # head, tail
+
 
     def push(self, data, stack):
         '''Accepts data and then which stack, 1 or 2, to
@@ -356,91 +601,151 @@ class ArrayOfStacks:
         if stack == 1:
             self._push_to_front_stack(data)
         elif stack == 2:
+            self._push_to_middle_stack(data)
+        elif stack == 3:
             self._push_to_back_stack(data)
         else:
-            raise Exception("value 'stack' should be 1 or 2")
+            raise Exception("value 'stack' should be 1, 2, or 3")
 
     def pop(self, stack):
-        '''Accepts a stack number, 1 or 2, and pops out
+        '''Accepts a stack number, 1, 2, or 3, and pops out
 		   the top value from that stack'''
         value = None
         if stack == 1:
             value = self._pop_from_front_stack()
         elif stack == 2:
+            value = self._pop_from_middle_stack()
+        elif stack == 3:
             value = self._pop_from_back_stack()
         else:
-            raise Exception("value 'stack' should be 1 or 2")
-        return value
-
-    def peek(self, stack):
-        '''Method accepts 1 or 2, denoting which stack
-		   you want to access. Then returns the top value
-		   from that stack'''
-        value = None
-        if stack == 1:
-            value = self.stack[self.head_1]
-        elif stack == 2:
-            value = self.stack[self.head_2]
+            raise Exception("value 'stack' should be 1, 2, or 3")
         return value
 
     def _push_to_front_stack(self, data):
-        '''Takes data and puts it into stack 1'''
-        if self.head_1 is None:
-            self.head_1 = 0
-            self.stack[self.head_1] = data
+        if self.head_front == self.middle[1]:
+            raise MemoryError("No more space in array")
+
+        if self.head_front == 0 and self.stack[self.head_front] is None:
+            self.stack[self.head_front] = data
+
+        elif self.head_front + 1 == self.middle[0] and self.middle[1] + 1 == self.head_back:
+            raise MemoryError("No more space in array")
+
+        elif self.head_front + 1 == self.middle[1]:
+            self._shift_middle(1)
+            self.head_front += 1
+            self.stack[self.head_front] = data
+
         else:
-            if self.head_1 + 1 == self.stack_size:
-                raise Exception("stack 1 at capacity")
-            self.head_1 += 1
-            self.stack[self.head_1] = data
+            self.head_front += 1
+            self.stack[self.head_front] = data
 
     def _push_to_back_stack(self, data):
-        '''Takes data and puts it into stack 2'''
-        if self.head_2 is None:
-            self.head_2 = len(self.stack) - 1
-            self.stack[self.head_2] = data
+        if self.head_back == self.middle[0]:
+            raise MemoryError("No more space in array")
+
+        elif self.head_back == len(self.stack) - 1 and self.stack[self.head_back] is None:
+            self.stack[self.head_back] = data
+
+        elif self.head_back -1 == self.middle[1] and self.middle[0] - 1 == self.head_front:
+            raise MemoryError("No more space in array")
+
+        elif self.head_back - 1 == self.middle[1]:
+            self._shift_middle(-1)
+            self.head_back -= 1
+            self.stack[self.head_back] = data
+
         else:
-            if (len(self.stack) - self.head_2) == self.stack_size:
-                raise Exception("stack 2 is at capacity")
-            self.head_2 -= 1
-            self.stack[self.head_2] = data
+            self.head_back -= 1
+            self.stack[self.head_back] = data
+
+    def _push_to_middle_stack(self, data):
+        if self.middle[1] == self.head_back:
+            raise MemoryError("No more space in array")
+
+        if self.middle[0] == self.middle[1] and self.stack[self.middle[0]] is None:
+            self.stack[self.middle[0]] = data
+
+        elif self.middle[1] + 1 == self.head_back and self.middle[0] - 1 == self.head_front:
+            raise MemoryError("No more space in array")
+
+        elif self.middle[1] + 1 == self.head_back:
+            self._shift_middle(-1)
+            self.middle[1] += 1
+            self.stack[self.middle[1]] = data
+
+        else:
+            self.middle[1] += 1
+            self.stack[self.middle[1]] = data
+
+    def _shift_middle(self, direction):
+        if direction < 0:
+            for i in range(self.middle[0], self.middle[1] + 1):
+                self.stack[i + direction] = self.stack[i]
+
+            self.middle[0] -= 1
+            self.middle[1] -= 1
+
+        elif direction > 0:
+            reversed_range = reversed(range(self.middle[0], self.middle[1] + 1))
+            for i in reversed_range:
+                self.stack[i + direction] = self.stack[i]
+
+            self.middle[0] += 1
+            self.middle[1] += 1
 
     def _pop_from_front_stack(self):
-        '''Removes the top value from the front stack and returns it'''
-        if self.head_1 is None:
-            raise Exception("stack 1 is empty")
+        if self.head_front == 0 and self.stack[self.head_front] is None:
+            raise IndexError("No data in stack")
 
-        value = self.stack[self.head_1]
-        self.stack[self.head_1] = None
+        if self.head_front == 0:
+            value = self.stack[self.head_front]
+            self.stack[self.head_front] = None
 
-        if self.head_1 == 0:
-            self.head_1 = None
-        elif self.head_1 > 0:
-            self.head_1 -= 1
+        else:
+            value = self.stack[self.head_front]
+            self.stack[self.head_front] = None
+            self.head_front -= 1
 
         return value
 
     def _pop_from_back_stack(self):
-        '''Removes the top value from the back stack and returns it'''
-        if self.head_2 is None:
-            raise Exception("Stack 2 is empty")
+        if self.head_back == len(self.stack) - 1 and self.stack[self.head_back] is None:
+            raise IndexError("No data in stack")
 
-        value = self.stack[self.head_2]
-        self.stack[self.head_2] = None
+        if self.head_back == len(self.stack) - 1:
+            value = self.stack[self.head_back]
+            self.stack[self.head_back] = None
 
-        if self.head_2 == len(self.stack) - 1:
-            self.head_2 = None
-        elif self.head_2 < len(self.stack) - 1:
-            self.head_2 += 1
+        else:
+            value = self.stack[self.head_back]
+            self.stack[self.head_back] = None
+            self.head_back += 1
 
         return value
 
-if __name__ == "__main__":
-    my_stack = ArrayOfStacks(3)
-    my_stack.push(4, 2)
-    my_stack.push(2, 1)
-    my_stack.push(1, 2)
-    my_stack.push(7, 1)
-    my_stack.push(100, 1)
-    print(my_stack.peek(2))
-    print(my_stack.peek(1))
+    def _pop_from_middle_stack(self):
+        if self.middle[1] == self.middle[0] and self.stack[self.middle[1]] is None:
+            raise IndexError("No data in stack")
+
+        elif self.middle[1] == self.middle[0]:
+            value = self.stack[self.middle[1]]
+            self.stack[self.middle[1]] = None
+
+        else:
+            value = self.stack[self.middle[1]]
+            self.stack[self.middle[1]] = None
+            self.middle[1] -= 1
+
+        return value
+
+    def peek(self, stack):
+        if stack == 1:
+            value = self.stack[self.head_front]
+        elif stack == 2:
+            value = self.stack[self.middle[1]]
+        elif stack == 3:
+            value = self.stack[self.head_back]
+        elif stack not in [1, 2, 3]:
+            raise Exception('can only peek into stack 1, 2, or 3')
+        return value
