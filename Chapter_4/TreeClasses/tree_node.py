@@ -1,0 +1,82 @@
+'''
+This module holds the class TreeNode and is used
+for building a tree data structure. The module also
+holds the function build_tree which will create a
+binary tree with the info passed into the function.
+'''
+from tree_queue import Queue
+
+class TreeNode:
+    """This class creates a TreeNode that holds data and a list of children nodes."""
+
+    def __init__(self, data: any):
+        """
+		Creates a node with the values data, and children
+
+		Args:
+			data: data that will be stored in the tree node
+		"""
+        self.data = data
+        self.left = None
+        self.right = None
+
+def build_tree(data: list) -> TreeNode:
+    """
+	Function that takes a list of data and uses it to build a tree.
+
+	Args:
+		data: The list of data that will be turned into tree nodes
+
+	Returns:
+		TreeNode: Will return the head node of newly created tree.
+
+	Raises:
+		TypeError: If type of data passed in is not list
+		Exception: If list passed in is empty
+	"""
+    if not isinstance(data, list):
+        raise TypeError('Data type must be list')
+    if not bool(data):
+        raise Exception("No data in list")
+
+    head_node = TreeNode(data[0])
+    current_node = head_node
+    my_queue = Queue()
+    total_nodes = 1
+    cur_index = 1
+
+    while total_nodes < len(data) or not my_queue.is_empty():
+        if current_node.data is None:
+            current_node.data = data[cur_index]
+            cur_index += 1
+
+        if current_node.left is None and current_node.right is None:
+            if total_nodes + 2 > len(data) and total_nodes + 1 > len(data):
+                current_node = my_queue.dequeue()
+            elif total_nodes + 2 <= len(data):
+                current_node.left = TreeNode(None)
+                current_node.right = TreeNode(None)
+                total_nodes += 2
+                my_queue.enqueue(current_node.left)
+                my_queue.enqueue(current_node.right)
+                current_node = my_queue.dequeue()
+            else:
+                current_node.left = TreeNode(None)
+                total_nodes += 1
+                my_queue.enqueue(current_node.left)
+                current_node = my_queue.dequeue()
+
+    current_node.data = data[cur_index]
+
+    return head_node
+
+if __name__ == "__main__":
+    list_of_shit = [4,2,6,1,3,5,7]
+    tree_head = build_tree(list_of_shit)
+    print(tree_head.data)
+    print(tree_head.left.data)
+    print(tree_head.right.data)
+    print(tree_head.left.left.data)
+    print(tree_head.left.right.data)
+    print(tree_head.right.left.data)
+    print(tree_head.right.right.data)
