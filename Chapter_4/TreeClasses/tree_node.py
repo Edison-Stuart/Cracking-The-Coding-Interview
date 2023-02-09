@@ -41,38 +41,38 @@ def build_tree(data: list) -> TreeNode:
 
     head_node = TreeNode(data[0])
     current_node = head_node
-    my_queue = Queue()
+    nodes_to_be_filled = Queue()
     total_nodes = 1
     cur_index = 1
 
-    while total_nodes < len(data) or not my_queue.is_empty():
+    while total_nodes < len(data) or not nodes_to_be_filled.is_empty():
         if current_node.data is None:
             current_node.data = data[cur_index]
             cur_index += 1
 
         if current_node.left is None and current_node.right is None:
             if total_nodes + 2 > len(data) and total_nodes + 1 > len(data):
-                current_node = my_queue.dequeue()
+                current_node = nodes_to_be_filled.dequeue()
             elif total_nodes + 2 <= len(data):
                 current_node.left = TreeNode(None)
                 current_node.right = TreeNode(None)
                 total_nodes += 2
-                my_queue.enqueue(current_node.left)
-                my_queue.enqueue(current_node.right)
-                current_node = my_queue.dequeue()
+                nodes_to_be_filled.enqueue(current_node.left)
+                nodes_to_be_filled.enqueue(current_node.right)
+                current_node = nodes_to_be_filled.dequeue()
             else:
                 current_node.left = TreeNode(None)
                 total_nodes += 1
-                my_queue.enqueue(current_node.left)
-                current_node = my_queue.dequeue()
+                nodes_to_be_filled.enqueue(current_node.left)
+                current_node = nodes_to_be_filled.dequeue()
 
     current_node.data = data[cur_index]
 
     return head_node
 
 if __name__ == "__main__":
-    list_of_shit = [4,2,6,1,3,5,7]
-    tree_head = build_tree(list_of_shit)
+    list_of_items = [4,2,6,1,3,5,7]
+    tree_head = build_tree(list_of_items)
     print(tree_head.data)
     print(tree_head.left.data)
     print(tree_head.right.data)
