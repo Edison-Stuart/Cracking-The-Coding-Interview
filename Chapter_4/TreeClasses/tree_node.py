@@ -4,7 +4,7 @@ for building a tree data structure. The module also
 holds the function build_tree which will create a
 binary tree with the info passed into the function.
 '''
-from tree_queue import Queue
+from .tree_queue import Queue
 
 class TreeNode:
     """This class creates a TreeNode that holds data and a list of children nodes."""
@@ -36,7 +36,7 @@ def build_tree(data: list) -> TreeNode:
 	"""
     if not isinstance(data, list):
         raise TypeError('Data type must be list')
-    if not bool(data):
+    if not data:
         raise Exception("No data in list")
 
     head_node = TreeNode(data[0])
@@ -51,7 +51,7 @@ def build_tree(data: list) -> TreeNode:
             cur_index += 1
 
         if current_node.left is None and current_node.right is None:
-            if total_nodes + 2 > len(data) and total_nodes + 1 > len(data):
+            if total_nodes == len(data):
                 current_node = nodes_to_be_filled.dequeue()
             elif total_nodes + 2 <= len(data):
                 current_node.left = TreeNode(None)
