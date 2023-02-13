@@ -66,17 +66,7 @@ def build_tree(data: list) -> TreeNode:
                 nodes_to_be_filled.enqueue(current_node.left)
                 current_node = nodes_to_be_filled.dequeue()
 
-    current_node.data = data[cur_index]
+    if len(data) != 1:
+        current_node.data = data[cur_index]
 
     return head_node
-
-if __name__ == "__main__":
-    list_of_items = [4,2,6,1,3,5,7]
-    tree_head = build_tree(list_of_items)
-    print(tree_head.data)
-    print(tree_head.left.data)
-    print(tree_head.right.data)
-    print(tree_head.left.left.data)
-    print(tree_head.left.right.data)
-    print(tree_head.right.left.data)
-    print(tree_head.right.right.data)

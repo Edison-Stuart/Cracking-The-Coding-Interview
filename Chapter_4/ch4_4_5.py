@@ -66,34 +66,66 @@ Unstacking the data
         list_of_data.push(stack_of_nodes.pop())
 
 for checking the data for validity, we can loop through our list of data reversed
-and check that data[i] > data[i + 1]. if this ever is true, we return false.
+and check if data[i] > data[i + 1]. if this ever is true, we return false.
 Otherwise we return true
 
+We also have to check for the end of the list,
+if a node is ever set to null, and if the tree
+has only one piece of data in it.
+
+If the tree has only one node, we return true
+
+    if len(list_of_data) == 1:
+        return True
+
+Then we can check for the end of the list,
+and if the current / next item is none.
+
     for i, item in enumerate(list_of_data):
-        if item < list_of_data[i + 1]:
+        if i == len(list_of_data) - 1:
+            break
+        if item is None:
+            pass
+        elif list_of_data[i + 1] is None:
+            pass
+        elif item >= list_of_data[i + 1]:
             return False
     return True
 
 we can also break the unstacking into a seperate function which
 returns a list to us
-
-
-
 '''
-from symbol import return_stmt
-from TreeClasses.tree_node import build_tree, TreeNode
-from TreeClasses.tree_stack import Stack
+from .TreeClasses.tree_node import TreeNode
+from .TreeClasses.tree_stack import Stack
 
 def visit(node: TreeNode, stack: Stack) -> Stack:
+    '''
+    Pushes a tree node into a given stack, returns that stack
+
+    Args:
+        node: The node that will be added to stack
+        stack: The stack that will be grown and returned
+
+    Returns:
+        stack: The same stack that was passed, with a new node at the top.
+    '''
     stack.push(node)
     return stack
 
 def collect_tree_data_in_order(head_node: TreeNode, my_stack: Stack = None) -> Stack:
+    '''
+    Preforms an in order search of a tree and returns a stack of the nodes.
+
+    Args:
+        head_node: The head node that is passed into the function to be searched.
+        my_stack: A stack that does not need to be passed in, as it is created
+            in the first go-around of the function.
+
+    Returns:
+        my_stack: The stack of nodes in the tree
+    '''
     if my_stack is None:
         my_stack = Stack()
-        head_node.data = (head_node.data, True)
-    elif head_node:
-        head_node.data = (head_node.data, False)
     if head_node:
         collect_tree_data_in_order(head_node.left, my_stack)
         my_stack = visit(head_node, my_stack)
@@ -101,31 +133,44 @@ def collect_tree_data_in_order(head_node: TreeNode, my_stack: Stack = None) -> S
     return my_stack
 
 def unstack_data(stack: Stack) -> list:
+    '''
+    Removes data from stack and gives back a list of said data.
+
+    Args:
+        stack: The stack to be emptied into a list
+
+    Returns:
+        return_list: A list of all the data from nodes in stack.
+    '''
     return_list = []
     while stack.is_empty() is False:
         return_list.append(stack.pop().data)
     return return_list
 
-def validate_BST(head_node: TreeNode) -> bool:
+def validate_bst(head_node: TreeNode) -> bool:
+    '''
+    Determines if a binary tree is a binary search tree.
+
+    Args:
+        head_node: The head node of a binary tree to be checked
+
+    Returns:
+        bool: True if tree is BST, False otherwise.
+    '''
     stack_of_nodes = collect_tree_data_in_order(head_node)
     list_of_data = unstack_data(stack_of_nodes)
-    head_node_found = False
     list_of_data.reverse()
+
+    if len(list_of_data) == 1:
+        return True
 
     for i, item in enumerate(list_of_data):
         if i == len(list_of_data) - 1:
             break
-        if item[1] is True:
-            head_node_found = True
-        if head_node_found is False:
-            if item[0] > list_of_data[i + 1][0]:
-                return False
-        else:
-            if item[0] >= list_of_data[i + 1][0]:
-                return False
+        if item is None:
+            pass
+        elif list_of_data[i + 1] is None:
+            pass
+        elif item >= list_of_data[i + 1]:
+            return False
     return True
-
-if __name__ == "__main__":
-    my_list = [10,8,12,7,9,11,13,7, 7]
-    my_tree = build_tree(my_list)
-    print(validate_BST(my_tree))
