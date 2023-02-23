@@ -90,7 +90,7 @@ def get_tree_depth(head_node: TreeNode) -> int:
     return depth_right
 
 
-def tree_to_linked_lists(head_node: TreeNode, linked_lists: dict = None, depth: int = None) -> dict:
+def tree_to_linked_lists(head_node: TreeNode, linked_lists: list = None, depth: int = None) -> dict:
     '''
     Converts a tree to a dict of linked lists.
 
@@ -102,25 +102,27 @@ def tree_to_linked_lists(head_node: TreeNode, linked_lists: dict = None, depth: 
 
         depth: The depth of the tree, is calculated when function is called.
 
+    Raises:
+        Exception: If Linked listis null with non null depth
+
     Returns:
         linked_lists: The complete dictionary of linked lists for each level
             of the tree.
     '''
     if depth is None:
-        depth = get_tree_depth(head_node)
-    if linked_lists is None:
-        linked_lists = {}
+        depth = 0
+        linked_lists = [None] * get_tree_depth(head_node)
+    elif linked_lists is None:
+        raise Exception("Linked list is null with non-null depth")
 
-    if linked_lists.get(depth) is None:
+    if linked_lists[depth] is None:
         linked_lists[depth] = Node(head_node.data)
     else:
         linked_lists[depth].append_to_tail(head_node.data)
 
-        if depth == 1:
-            return linked_lists
-
-    if head_node.left is not None:
-        linked_lists = tree_to_linked_lists(head_node.left, linked_lists, depth - 1)
-    if head_node.right is not None:
-        linked_lists = tree_to_linked_lists(head_node.right, linked_lists, depth - 1)
+    if depth < len(linked_lists) - 1:
+        if head_node.left is not None:
+            linked_lists = tree_to_linked_lists(head_node.left, linked_lists, depth + 1)
+        if head_node.right is not None:
+            linked_lists = tree_to_linked_lists(head_node.right, linked_lists, depth + 1)
     return linked_lists
