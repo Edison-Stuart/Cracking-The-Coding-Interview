@@ -32,7 +32,7 @@ def build_graph(data):
                     current_node.edges[1].vertices[1],
                     current_node.edges[2].vertices[1]
                     ]
-                print('got here')
+
                 next_nodes[0].edges[0] = left_edge
                 next_nodes[1].edges[0] = right_edge
 
