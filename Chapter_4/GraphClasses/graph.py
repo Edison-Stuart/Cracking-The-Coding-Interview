@@ -1,5 +1,5 @@
 from .edge import Edge
-from TreeClasses.tree_queue import Queue
+from ..TreeClasses.tree_queue import Queue
 
 class GraphNode:
     def __init__(self, data=None):
@@ -127,21 +127,17 @@ def build_graph(data):
         if current_node.edges[1] is None and current_node.edges[2] is None:
             if total_nodes == len(data):
                 current_node = nodes_to_be_filled.dequeue()
+
             elif total_nodes + 2 <= len(data):
                 total_nodes += 2
-
                 add_two_nodes(current_node, nodes_to_be_filled)
-
                 current_node = nodes_to_be_filled.dequeue()
+
             else:
                 total_nodes += 1
-
                 current_node.edges[1] = create_new_connected_edge(current_node)
-
                 next_node = current_node.edges[1].vertices[1]
-
                 add_previous_edge(next_node, current_node.edges[1])
-
                 nodes_to_be_filled.enqueue(next_node)
                 current_node = nodes_to_be_filled.dequeue()
 
