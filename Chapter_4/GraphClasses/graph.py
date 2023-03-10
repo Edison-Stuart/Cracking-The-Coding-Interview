@@ -14,7 +14,7 @@ def create_new_connected_edge(node: GraphNode) -> Edge:
         node(GraphNode): The node that will be connected to the first
             vertex of the Edge object.
 
-    Retruns:
+    Returns:
         Edge: A new Edge object that has stored in the vertices array
             at vertices[0], the node, and at vertices[1], the new GraphNode
 
