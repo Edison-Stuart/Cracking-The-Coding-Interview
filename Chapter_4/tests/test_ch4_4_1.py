@@ -1,37 +1,38 @@
-from ..ch4_4_1 import CheckForPath
+from ..ch4_4_1 import CheckForPath, GraphCycleException
 import pytest
+
 
 @pytest.mark.parametrize("graph, targets, expected",[
     (
     CheckForPath({1: [2, 3], 2: [6], 3: [2, 5], 4: [2], 5: [4], 6: []}),
     [1, 4],
-    True
+    [1,3,5,4]
 	),
     (
     CheckForPath({1: [2, 3], 2: [4], 3: [4], 4: [], 5: [2], 6: [7, 3], 7: [], 8: [6]}),
     [8, 4],
-    True
+    [8,6,3,4]
 	),
 ])
-def test_find_any_path_true(graph, targets, expected):
-    response = graph.is_path_present(targets[0], targets[1])
-    assert response is expected
+def test_are_nodes_connected_true(graph, targets, expected):
+    response = graph.are_nodes_connected(targets[0], targets[1])
+    assert response == expected
 
 @pytest.mark.parametrize("graph, targets, expected",[
     (
     CheckForPath({1: [2, 3], 2: [6], 3: [2, 5], 4: [2], 5: [4], 6: []}),
     [3, 1],
-    False
+    None
 	),
     (
     CheckForPath({1: [2, 3], 2: [4], 3: [4], 4: [], 5: [2], 6: [7, 3], 7: [], 8: [6]}),
     [8, 2],
-    False
+    None
 	),
 ])
-def test_find_any_path_false(graph, targets, expected):
-    response = graph.is_path_present(targets[0], targets[1])
-    assert response is expected
+def test_are_nodes_connected_false(graph, targets, expected):
+    response = graph.are_nodes_connected(targets[0], targets[1])
+    assert response == expected
 
 @pytest.mark.parametrize("graph, targets",[
     (
@@ -43,6 +44,6 @@ def test_find_any_path_false(graph, targets, expected):
     [8, 2]
 	),
 ])
-def test_find_any_path_invalid(graph, targets):
+def test_are_nodes_connected_invalid(graph, targets):
     with pytest.raises(Exception):
-        graph.is_path_present(targets[0], targets[1])
+        graph.are_nodes_connected(targets[0], targets[1])
