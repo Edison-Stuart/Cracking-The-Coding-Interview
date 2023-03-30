@@ -214,8 +214,7 @@ def create_node_list(node_data):
     return_list = [[None, []]] * len(node_data)
     my_gen = node_generator(node_data)
     for i in range(len(return_list)):
-        next_node = next(my_gen)
-        return_list[i] = [next_node, []]
+        return_list[i] = [next(my_gen), []]
 
     for i, node in enumerate(return_list):
         if (i * 2) + 1 == len(return_list) - 1:
