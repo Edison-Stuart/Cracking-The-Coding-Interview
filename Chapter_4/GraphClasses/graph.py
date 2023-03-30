@@ -5,6 +5,7 @@ class GraphNode:
     def __init__(self, data=None):
         self.data = data
         self.edges = [None] * 3
+        self.marked = None
 
 def create_new_connected_edge(node: GraphNode) -> Edge:
     '''
