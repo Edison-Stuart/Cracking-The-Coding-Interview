@@ -5,7 +5,7 @@ class LinkedList:
     def __init__(self, *args):
         self.head_node = None
         for i, item in enumerate(args):
-            if i is 0:
+            if i == 0:
                 self.head_node = Node(item)
             else:
                 self.head_node.append_to_tail(item)

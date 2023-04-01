@@ -592,7 +592,7 @@ class ArrayOfStacks:
         self.stack = [None] * array_size
         self.head_back = len(self.stack) - 1
         self.head_front = 0
-        self.middle = [math.floor(array_size / 2), math.floor(array_size / 2)] # head, tail
+        self.middle = [math.floor(array_size / 2) - 1, math.floor(array_size / 2) - 1] # head, tail
 
 
     def push(self, data, stack):
